@@ -52,13 +52,13 @@ module OpenAI
     end
 
     def self.get(path:)
-      to_json(conn.get(uri(path: path), timeout: OpenAI.configuration.request_timeout) do |req|
+      to_json(conn.get(uri(path: path)) do |req|
         req.headers = headers
       end&.body)
     end
 
     def self.json_post(path:, parameters:)
-      to_json(conn.post(uri(path: path), timeout: OpenAI.configuration.request_timeout) do |req|
+      to_json(conn.post(uri(path: path)) do |req|
         if parameters[:stream].is_a?(Proc)
           req.options.on_data = to_json_stream(user_proc: parameters[:stream])
           parameters[:stream] = true # Necessary to tell OpenAI to stream.
@@ -70,16 +70,19 @@ module OpenAI
     end
 
     def self.multipart_post(path:, parameters: nil)
-      m_conn = Faraday.new { |f| f.request :multipart }
+      m_conn = Faraday.new do |f|
+        f.request :multipart
+        f.options[:timeout] = OpenAI.configuration.request_timeout
+      end
 
-      to_json(m_conn.post(uri(path: path), timeout: OpenAI.configuration.request_timeout) do |req|
+      to_json(m_conn.post(uri(path: path)) do |req|
         req.headers = headers.merge({ "Content-Type" => "multipart/form-data" })
         req.body = multipart_parameters(parameters)
       end&.body)
     end
 
     def self.delete(path:)
-      to_json(conn.delete(uri(path: path), timeout: OpenAI.configuration.request_timeout) do |req|
+      to_json(conn.delete(uri(path: path)) do |req|
         req.headers = headers
       end&.body)
     end
@@ -112,7 +115,9 @@ module OpenAI
     end
 
     private_class_method def self.conn
-      Faraday.new
+      Faraday.new do |f|
+        f.options[:timeout] = OpenAI.configuration.request_timeout
+      end
     end
 
     private_class_method def self.uri(path:)
