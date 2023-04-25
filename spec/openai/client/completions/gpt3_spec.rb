@@ -21,6 +21,7 @@ RSpec.describe OpenAI::Client do
 
         it "succeeds" do
           VCR.use_cassette(cassette) do
+            puts text.split
             expect(text.split.empty?).to eq(false)
           end
         end
@@ -31,6 +32,7 @@ RSpec.describe OpenAI::Client do
 
         it "succeeds" do
           VCR.use_cassette(cassette) do
+            puts text.split
             expect(text.split.empty?).to eq(false)
           end
         end
@@ -41,6 +43,7 @@ RSpec.describe OpenAI::Client do
 
         it "succeeds" do
           VCR.use_cassette(cassette) do
+            puts text.split
             expect(text.split.empty?).to eq(false)
           end
         end
@@ -51,6 +54,7 @@ RSpec.describe OpenAI::Client do
 
         it "succeeds" do
           VCR.use_cassette(cassette) do
+            puts text.split
             expect(text.split.empty?).to eq(false)
           end
         end
